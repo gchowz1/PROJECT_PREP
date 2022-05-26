@@ -1,0 +1,76 @@
+import hashlib as hs
+import time as ts
+timestamp = ts.time()
+def TIMESTAMP():
+    return ts.time()
+
+class BLOCK:
+    def __init__(self, index, data, prev=''):
+        self. index=index
+        self.x=TIMESTAMP()
+        self.data=data
+        self.prev=prev
+        self.Hash = self.calculateHash()
+
+    def calculateHash(self):
+        return hs.sha256(str(self.index). encode()+str (self.prev) .encode()+str(self.x). encode()+str (self .data). encode ()) .hexdigest()
+
+class BLOCKCHAIN():
+    def __init__(self):
+        self.chain=[self.CreateGenesisBlock(),]
+    def CreateGenesisBlock(self):
+        return BLOCK(0,1)
+    def GetLatestBlock(self):
+        return self.chain[len(self.chain)-1]
+    def AddBlock(self, NewBlock):
+        NewBlock.prev=self.GetLatestBlock().Hash
+        NewBlock.Hash=NewBlock.calculateHash()
+        self.chain.append(NewBlock)
+    def Update_Data(self,i,Up):
+        self.chain[i].data=Up
+        self.chain[i].x=TIMESTAMP()
+        self.chain[i].Hash=self.chain[i].calculateHash()
+    def IsChainValid(self):
+        for i in range(len(self.chain)-1) :
+            a=self.chain[i]
+            b=self.chain[i+1]
+            if(a.Hash!=a.calculateHash()):
+                return "THE BLOCK CHAIN WAS TAMPERED"
+            if(b.prev!=a.Hash):
+                return "THE BLOCK CHAIN WAS TAMPERED"
+            if (i==len(self.chain)-2):
+                return "EVERYTHING WORKS FINE"
+
+bch=BLOCKCHAIN()
+
+i=0
+
+print(" WELCOME")
+while (True) :
+    print("select 1: Transfering funds \nselect 2: For hacking\nselect 3 for validation of blockchain\nselect 4: for viewing the Blockchain")
+    a=int(input ())
+    if(a==1):
+        print ("enter your amount:")
+        amount=int(input ())
+        bch.AddBlock(BLOCK(i, amount) )
+        i+=1
+    if(a==2):
+        print("enter the block you want to tamper: ")
+        k=int (input())
+        print ("enter the amount which you want to hack: ")
+        amount=int (input())
+        bch.Update_Data(k, amount)
+    if (a==3):
+        print(bch.IsChainValid())
+        print ("Press D to EXIT and another Key to continue")
+        d=input()
+        if (d=="d" or d=="D"):
+            break
+    if(a==4):
+        for k in range(1, i+1):
+            print ("Index:      ", bch.chain[k].index)
+            print("Timestamp:   ", bch.chain[k].x)
+            print("Amount:      ", bch.chain[k].data)
+            print("Previous Hash:",bch.chain[k].prev)  
+            print("Current Hash: ", bch.chain[k].Hash)
+            print("\n")
